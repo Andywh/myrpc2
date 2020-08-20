@@ -17,8 +17,8 @@ public class RpcProxy {
                 new Class<?>[]{interfaceClass},
                 new InvocationHandler() {
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        Object resut = method.invoke(proxy, args);
-                        System.out.println(resut);
+                        //Object resut = method.invoke(proxy, args);
+                        System.out.println("456");
                         return null;
                     }
                 }
