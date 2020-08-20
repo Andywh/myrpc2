@@ -25,6 +25,7 @@ public class RpcProxy {
         );
     }
 
+
     public static void main(String[] args) {
         RpcProxy proxy = new RpcProxy();
         UserService userService = (UserService) proxy.create(UserService.class);
