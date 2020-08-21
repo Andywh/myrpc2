@@ -11,5 +11,14 @@
 
     <artifactId>myrpc-client</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.joy.rpc</groupId>
+            <artifactId>myrpc-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+
 
 </project>
