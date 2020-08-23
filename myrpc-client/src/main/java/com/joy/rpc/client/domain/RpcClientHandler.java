@@ -49,7 +49,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, User in) throws Exception {
-        System.out.println("Client recieved: " + in.toString());
+        //System.out.println("Client recieved: " + in.toString());
         // 这里的两个 RpcClientHandler 不一样，所以 future 报了 npe
         this.future.done(in);
     }

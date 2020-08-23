@@ -134,7 +134,7 @@ public class RpcClient {
         //RpcClient client = new RpcClient();
         Future future = client.sendRequest(new User("an", 1000));
         System.out.println("continue...");
-        System.out.println("future.get: " + future.get());
+        System.out.println("异步结果: " + future.get());
         //System.out.println("end...");
     }
 }
