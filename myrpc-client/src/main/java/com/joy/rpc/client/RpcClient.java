@@ -128,13 +128,13 @@ public class RpcClient {
     //}
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        RpcClient client = new RpcClient();
-        client.send(new User("an", 12));
+        RpcClientHandler client = new RpcClientHandler();
+        //client.send(new User("an", 12));
         //ChannelFuture channelFuture = client.channel.writeAndFlush(new User("And,", 90)).sync();
         //RpcClient client = new RpcClient();
-        //Future future = client.sendRequest(new User("an", 1000));
+        Future future = client.sendRequest(new User("an", 1000));
         System.out.println("continue...");
-        //System.out.println(future.get());
+        System.out.println("future.get: " + future.get());
         //System.out.println("end...");
     }
 }

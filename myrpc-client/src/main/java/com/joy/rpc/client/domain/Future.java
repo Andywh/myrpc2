@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Future implements java.util.concurrent.Future<Object> {
 
-    private Sync sync;
+    private Sync sync = new Sync();
 
     private Request request;
 
