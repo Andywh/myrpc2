@@ -17,6 +17,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<User> {
         System.out.println("server receive message");
         //super.channelRead(ctx, msg);
         System.out.println("Server received: " + msg.toString());
+        Thread.sleep(3000);
         ctx.writeAndFlush(msg).addListener(ChannelFutureListener.CLOSE);
 
     }

@@ -22,12 +22,13 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
     //
     //private Channel channel;
 
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws InterruptedException {
-        User user = new User("andy", 18);
-        System.out.println("send: " + user);
-        ctx.writeAndFlush(user).sync();
-        System.out.println("send: end");
+        //User user = new User("andy", 18);
+        //System.out.println("send: " + user);
+        //ctx.writeAndFlush(user).sync();
+        //System.out.println("send: end");
 
     }
 

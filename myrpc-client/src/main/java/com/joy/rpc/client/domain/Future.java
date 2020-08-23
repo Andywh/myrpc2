@@ -3,6 +3,7 @@ package com.joy.rpc.client.domain;
 import com.joy.rpc.client.RpcClient;
 import com.joy.rpc.common.domain.Request;
 import com.joy.rpc.common.domain.Response;
+import com.joy.rpc.common.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +24,13 @@ public class Future implements java.util.concurrent.Future<Object> {
 
     private Response response;
 
+    private User user;
+
     private List<AsyCallback> pendingCallbacks = new ArrayList<>();
 
     private ReentrantLock lock = new ReentrantLock();
 
-    public Future(Sync sync, Request request) {
+    public Future(Request request) {
         this.sync = new Sync();
         this.request = request;
     }
@@ -57,6 +60,11 @@ public class Future implements java.util.concurrent.Future<Object> {
         this.response = response;
         sync.release(1);
         invokeCallbacks();
+    }
+
+    public void done(User user) {
+        this.user = user;
+        sync.release(1);
     }
 
     private void invokeCallbacks() {
@@ -91,8 +99,9 @@ public class Future implements java.util.concurrent.Future<Object> {
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         boolean success = sync.tryAcquireNanos(1, unit.toNanos(timeout));
         if (success) {
-            if (this.response != null) {
-                return this.response.getResult();
+            if (this.user != null) {
+                //return this.response.getResult();
+                return this.user;
             } else {
                 return null;
             }

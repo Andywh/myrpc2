@@ -1,6 +1,7 @@
 package com.joy.rpc.client.proxy;
 
 import com.alibaba.fastjson.JSON;
+import com.joy.rpc.client.RpcClient;
 import com.joy.rpc.client.domain.RpcClientHandler;
 import com.joy.rpc.client.service.UserService;
 import com.joy.rpc.common.domain.Request;
@@ -22,9 +23,6 @@ public class RpcProxy {
                 new Class<?>[]{interfaceClass},
                 new InvocationHandler() {
                     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        //Object resut = method.invoke(proxy, args);
-                        //System.out.println("456");
-                        //return null;
                         // todo 这里要把数据发送出去
                         Request request = new Request();
                         String requestId = UUID.randomUUID().toString();
@@ -34,6 +32,8 @@ public class RpcProxy {
                         request.setParameterTypes(method.getParameterTypes());
                         request.setParameters(args);
                         System.out.println(JSON.toJSONString(request));
+                        //RpcClient.send(request);
+
                         //log.info("request: {}" + JSON.toJSONString(request));
                         //RpcClientHandler handler =
                         return null;
