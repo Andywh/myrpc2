@@ -1,5 +1,8 @@
 package com.joy.rpc.server;
 
+import com.joy.rpc.common.codec.RpcDecoder;
+import com.joy.rpc.common.codec.RpcEncoder;
+import com.joy.rpc.common.domain.User;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -25,6 +28,8 @@ public class RpcServer {
                 @Override
                 protected void initChannel(SocketChannel channel) throws Exception {
                     ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcEncoder(User.class)); // 编码 RPC 请求
+                    pipeline.addLast(new RpcDecoder(User.class)); // 解码 RPC 响应
                     pipeline.addLast(new RpcServerHandler());
                 }
             });

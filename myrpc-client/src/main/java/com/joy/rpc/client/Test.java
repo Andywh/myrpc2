@@ -2,6 +2,9 @@ package com.joy.rpc.client;
 
 import com.joy.rpc.client.domain.RpcClientHandler;
 import com.joy.rpc.client.service.UserService;
+import com.joy.rpc.common.codec.RpcDecoder;
+import com.joy.rpc.common.codec.RpcEncoder;
+import com.joy.rpc.common.domain.User;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -33,7 +36,10 @@ public class Test {
                 @Override
                 public void initChannel(SocketChannel channel) throws Exception {
                     ChannelPipeline pipeline = channel.pipeline();
+                    pipeline.addLast(new RpcEncoder(User.class)); // 编码 RPC 请求
+                    pipeline.addLast(new RpcDecoder(User.class)); // 解码 RPC 响应
                     pipeline.addLast(new RpcClientHandler()); // 处理 RPC 响应
+
                 }
             });
             bootstrap.option(ChannelOption.TCP_NODELAY, true);
