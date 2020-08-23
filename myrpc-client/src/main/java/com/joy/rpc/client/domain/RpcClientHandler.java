@@ -1,5 +1,6 @@
 package com.joy.rpc.client.domain;
 
+import com.joy.rpc.client.RpcClient;
 import com.joy.rpc.common.codec.RpcDecoder;
 import com.joy.rpc.common.codec.RpcEncoder;
 import com.joy.rpc.common.domain.Request;
@@ -30,6 +31,13 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
 
     private Future future;
 
+    public RpcClientHandler() {
+
+    }
+    public RpcClientHandler(Future future) {
+        this.future = future;
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws InterruptedException {
         //User user = new User("andy", 18);
@@ -48,16 +56,16 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
 
     public Future sendRequest(User user) {
         Future future = new Future(new Request());
-        this.future = future;
+        //this.future = future;
         try {
-            this.send(user);
+            this.send(user, future);
         } catch (Exception e) {
 
         }
         return future;
     }
 
-    public void send(User user) {
+    public void send(User user, Future future) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             // 创建并初始化 Netty 客户端 Bootstrap 对象
@@ -71,14 +79,14 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
                     ChannelPipeline pipeline = channel.pipeline();
                     pipeline.addLast(new RpcEncoder(User.class)); // 编码 RPC 请求
                     pipeline.addLast(new RpcDecoder(User.class)); // 解码 RPC 响应
-                    pipeline.addLast(new RpcClientHandler()); // 处理 RPC 响应
+                    pipeline.addLast(new RpcClientHandler(future)); // 处理 RPC 响应
                 }
             });
             bootstrap.option(ChannelOption.TCP_NODELAY, true);
             // 连接 RPC 服务器
-            ChannelFuture future = bootstrap.connect("127.0.0.1", 8894).sync();
+            ChannelFuture future2 = bootstrap.connect("127.0.0.1", 8894).sync();
             // 写入 RPC 请求数据并关闭连接
-            Channel channel = future.channel();
+            Channel channel = future2.channel();
             //channel.writeAndFlush(new User("andy", 19));
             channel.writeAndFlush(user).sync();
             // fixme 下面一句注释了就变异步了,加上不要关闭连接（也就是注释掉 finally 里的代码)

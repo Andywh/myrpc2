@@ -47,10 +47,18 @@ public class Future implements java.util.concurrent.Future<Object> {
         return sync.isDone();
     }
 
+    //public Object get() throws InterruptedException, ExecutionException {
+    //    sync.acquire(1);
+    //    if (this.response != null) {
+    //        return this.response.getResult();
+    //    } else {
+    //        return null;
+    //    }
+    //}
     public Object get() throws InterruptedException, ExecutionException {
         sync.acquire(1);
-        if (this.response != null) {
-            return this.response.getResult();
+        if (this.user != null) {
+            return this.user;
         } else {
             return null;
         }
