@@ -73,9 +73,15 @@ public class Future implements java.util.concurrent.Future<Object> {
     public void done(User user) {
         this.user = user;
         sync.release(1);
+        invokeCallbacks();
+    }
+
+    public void addCallBack(AsyCallback asyCallback) {
+        pendingCallbacks.add(asyCallback);
     }
 
     private void invokeCallbacks() {
+        System.out.println("invokeCallbacks");
         lock.lock();
         try {
             for (final AsyCallback callback : pendingCallbacks) {
@@ -94,6 +100,10 @@ public class Future implements java.util.concurrent.Future<Object> {
         RpcClient.submit(new Runnable() {
             @Override
             public void run() {
+                System.out.println("run");
+
+                callback.success("123");
+
                 if (!res.isError()) {
                     callback.success(res.getResult());
                 } else {

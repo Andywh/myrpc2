@@ -1,5 +1,6 @@
 package com.joy.rpc.client;
 
+import com.joy.rpc.client.domain.AsyCallback;
 import com.joy.rpc.client.domain.Future;
 import com.joy.rpc.client.domain.RpcClientHandler;
 import com.joy.rpc.client.proxy.RpcProxy;
@@ -133,6 +134,17 @@ public class RpcClient {
         //ChannelFuture channelFuture = client.channel.writeAndFlush(new User("And,", 90)).sync();
         //RpcClient client = new RpcClient();
         Future future = client.sendRequest(new User("an", 1000));
+        future.addCallBack(new AsyCallback() {
+            @Override
+            public void success(Object result) {
+                System.out.println("success");
+            }
+
+            @Override
+            public void fail(Exception e) {
+                System.out.println("fail");
+            }
+        });
         System.out.println("continue...");
         System.out.println("异步结果: " + future.get());
         //System.out.println("end...");
