@@ -133,7 +133,11 @@ public class RpcClient {
         //client.send(new User("an", 12));
         //ChannelFuture channelFuture = client.channel.writeAndFlush(new User("And,", 90)).sync();
         //RpcClient client = new RpcClient();
-        Future future = client.sendRequest(new User("an", 1000));
+        Request request = new Request();
+        request.setRequestId("2874362");
+        request.setClazzName("com.joy.rpc.UserServiceImpl");
+        request.setMethodName("query()");
+        Future future = client.sendRequest(request);
         future.addCallBack(new AsyCallback() {
             @Override
             public void success(Object result) {

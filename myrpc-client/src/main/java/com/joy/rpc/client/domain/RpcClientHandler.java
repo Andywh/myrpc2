@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Ai Lun on 2020-08-22.
  */
-public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
+public class RpcClientHandler extends SimpleChannelInboundHandler<Response> {
     //
     //private ConcurrentHashMap<String, List<Future>> futureContext;
     //
@@ -48,24 +48,24 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, User in) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
         //System.out.println("Client recieved: " + in.toString());
         // 这里的两个 RpcClientHandler 不一样，所以 future 报了 npe
-        this.future.done(in);
+        this.future.done(response);
     }
 
-    public Future sendRequest(User user) {
-        Future future = new Future(new Request());
+    public Future sendRequest(Request request) {
+        Future future = new Future(request);
         //this.future = future;
         try {
-            this.send(user, future);
+            this.send(request, future);
         } catch (Exception e) {
 
         }
         return future;
     }
 
-    public void send(User user, Future future) {
+    public void send(Request request, Future future) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             // 创建并初始化 Netty 客户端 Bootstrap 对象
@@ -77,8 +77,8 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
                 @Override
                 public void initChannel(SocketChannel channel) throws Exception {
                     ChannelPipeline pipeline = channel.pipeline();
-                    pipeline.addLast(new RpcEncoder(User.class)); // 编码 RPC 请求
-                    pipeline.addLast(new RpcDecoder(User.class)); // 解码 RPC 响应
+                    pipeline.addLast(new RpcEncoder(Request.class)); // 编码 RPC 请求
+                    pipeline.addLast(new RpcDecoder(Response.class)); // 解码 RPC 响应
                     pipeline.addLast(new RpcClientHandler(future)); // 处理 RPC 响应
                 }
             });
@@ -88,7 +88,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<User> {
             // 写入 RPC 请求数据并关闭连接
             Channel channel = future2.channel();
             //channel.writeAndFlush(new User("andy", 19));
-            channel.writeAndFlush(user).sync();
+            channel.writeAndFlush(request).sync();
             // fixme 下面一句注释了就变异步了,加上不要关闭连接（也就是注释掉 finally 里的代码)
             //channel.closeFuture().sync();
             // 返回 RPC 响应对象

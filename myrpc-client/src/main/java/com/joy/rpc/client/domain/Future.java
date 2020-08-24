@@ -57,8 +57,8 @@ public class Future implements java.util.concurrent.Future<Object> {
     //}
     public Object get() throws InterruptedException, ExecutionException {
         sync.acquire(1);
-        if (this.user != null) {
-            return this.user;
+        if (this.response != null) {
+            return this.response;
         } else {
             return null;
         }
@@ -66,12 +66,6 @@ public class Future implements java.util.concurrent.Future<Object> {
 
     public void done(Response response) {
         this.response = response;
-        sync.release(1);
-        invokeCallbacks();
-    }
-
-    public void done(User user) {
-        this.user = user;
         sync.release(1);
         invokeCallbacks();
     }
