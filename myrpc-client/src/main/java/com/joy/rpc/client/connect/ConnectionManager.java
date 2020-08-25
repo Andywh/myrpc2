@@ -39,7 +39,7 @@ public class ConnectionManager {
         return SingletonHolder.instance;
     }
 
-    public void connectServer(String host, int port) {
+    public void connectServer(String host, int port, String serviceName) {
         threadPool.submit(new Runnable() {
             @Override
             public void run() {
@@ -49,7 +49,16 @@ public class ConnectionManager {
                             .channel(NioSocketChannel.class)
                             .handler(new RpcClientInitializer());
 
-                    bootstrap.connect(host, port).sync();
+                    ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+                    channelFuture.addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture future) throws Exception {
+                            if (future.isSuccess()) {
+                                ChannelManager.putChannel(serviceName, future.channel());
+                                System.out.println("future is success");
+                            }
+                        }
+                    });
                 } catch (Exception e) {
                     System.out.println("e " + e.toString());
                 }

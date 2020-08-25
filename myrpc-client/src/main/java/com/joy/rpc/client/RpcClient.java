@@ -18,8 +18,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class RpcClient {
 
-    private Channel channel;
-
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
             600L, TimeUnit.SECONDS, new LinkedBlockingDeque<>(1000));
 
@@ -27,14 +25,14 @@ public class RpcClient {
         threadPoolExecutor.submit(task);
     }
 
-    public static <T> T createService(Class<T> interfaceClass) {
-        return RpcProxy.create(interfaceClass);
-    }
+    //public static <T> T createService(Class<T> interfaceClass) {
+    //    return RpcProxy.create(interfaceClass);
+    //}
 
     public Future send(Request request) {
         Future future = new Future(request);
         FutureManager.putFuture(request.getRequestId(), future);
-        Channel channel = ChannelManager.getChannel("getUserName");
+        Channel channel = ChannelManager.getChannel("getUser");
         System.out.println("choose channel: " + channel.remoteAddress().toString());
         try {
             channel.writeAndFlush(request).sync();
@@ -47,8 +45,8 @@ public class RpcClient {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         ConnectionManager connectionManager = new ConnectionManager();
-        connectionManager.connectServer("127.0.0.1", 8894);
-        connectionManager.connectServer("127.0.0.1", 8895);
+        connectionManager.connectServer("127.0.0.1", 8894, "getUser");
+        connectionManager.connectServer("127.0.0.1", 8895, "getPoint");
 
         RpcClient client = new RpcClient();
 
