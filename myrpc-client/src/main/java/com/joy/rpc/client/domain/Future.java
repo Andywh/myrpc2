@@ -24,8 +24,6 @@ public class Future implements java.util.concurrent.Future<Object> {
 
     private Response response;
 
-    private User user;
-
     private List<AsyCallback> pendingCallbacks = new ArrayList<>();
 
     private ReentrantLock lock = new ReentrantLock();
@@ -47,14 +45,6 @@ public class Future implements java.util.concurrent.Future<Object> {
         return sync.isDone();
     }
 
-    //public Object get() throws InterruptedException, ExecutionException {
-    //    sync.acquire(1);
-    //    if (this.response != null) {
-    //        return this.response.getResult();
-    //    } else {
-    //        return null;
-    //    }
-    //}
     public Object get() throws InterruptedException, ExecutionException {
         sync.acquire(1);
         if (this.response != null) {
@@ -94,9 +84,9 @@ public class Future implements java.util.concurrent.Future<Object> {
         RpcClient.submit(new Runnable() {
             @Override
             public void run() {
-                System.out.println("run");
-
-                callback.success("123");
+                //System.out.println("run");
+                //
+                //callback.success("123");
 
                 if (!res.isError()) {
                     callback.success(res.getResult());
@@ -111,9 +101,8 @@ public class Future implements java.util.concurrent.Future<Object> {
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         boolean success = sync.tryAcquireNanos(1, unit.toNanos(timeout));
         if (success) {
-            if (this.user != null) {
-                //return this.response.getResult();
-                return this.user;
+            if (this.response != null) {
+                return this.response.getResult();
             } else {
                 return null;
             }
