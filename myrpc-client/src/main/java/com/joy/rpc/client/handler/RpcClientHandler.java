@@ -1,66 +1,62 @@
-package com.joy.rpc.client.domain;
+package com.joy.rpc.client.handler;
 
-import com.joy.rpc.client.RpcClient;
+import com.joy.rpc.client.connect.ChannelManager;
+import com.joy.rpc.client.domain.Future;
+import com.joy.rpc.client.domain.context.FutureManager;
 import com.joy.rpc.common.codec.RpcDecoder;
 import com.joy.rpc.common.codec.RpcEncoder;
 import com.joy.rpc.common.domain.Request;
 import com.joy.rpc.common.domain.Response;
-import com.joy.rpc.common.domain.User;
-import com.joy.rpc.common.util.SerializationUtil;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Ai Lun on 2020-08-22.
  */
 public class RpcClientHandler extends SimpleChannelInboundHandler<Response> {
-    //
-    //private ConcurrentHashMap<String, List<Future>> futureContext;
-    //
-    //private Channel channel;
 
-    private Future future;
+    private static RpcClientHandler clientHandler;
 
-    public RpcClientHandler() {
-
-    }
-    public RpcClientHandler(Future future) {
-        this.future = future;
+    public static RpcClientHandler getInstance() {
+        if (clientHandler == null) {
+            clientHandler = new RpcClientHandler();
+        }
+        return clientHandler;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws InterruptedException {
-        //User user = new User("andy", 18);
-        //System.out.println("send: " + user);
-        //ctx.writeAndFlush(user).sync();
-        //System.out.println("send: end");
-
+        System.out.println("channelActive " + ctx.channel().remoteAddress().toString());
+        ChannelManager.putChannel("getUserName", ctx.channel());
     }
+
+
+    @Override
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("channelRegistered");
+        super.channelRegistered(ctx);
+    }
+
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Response response) throws Exception {
-        //System.out.println("Client recieved: " + in.toString());
-        // 这里的两个 RpcClientHandler 不一样，所以 future 报了 npe
-        this.future.done(response);
+        String requestId = response.getRequestId();
+        Future future = FutureManager.getFuture(requestId);
+        future.done(response);
     }
 
     public Future sendRequest(Request request) {
         Future future = new Future(request);
-        //this.future = future;
+        FutureManager.putFuture(request.getRequestId(), future);
         try {
             this.send(request, future);
         } catch (Exception e) {
-
+            System.out.println("error: " + e.toString());
         }
         return future;
     }
@@ -79,7 +75,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<Response> {
                     ChannelPipeline pipeline = channel.pipeline();
                     pipeline.addLast(new RpcEncoder(Request.class)); // 编码 RPC 请求
                     pipeline.addLast(new RpcDecoder(Response.class)); // 解码 RPC 响应
-                    pipeline.addLast(new RpcClientHandler(future)); // 处理 RPC 响应
+                    pipeline.addLast(new RpcClientHandler()); // 处理 RPC 响应
                 }
             });
             bootstrap.option(ChannelOption.TCP_NODELAY, true);

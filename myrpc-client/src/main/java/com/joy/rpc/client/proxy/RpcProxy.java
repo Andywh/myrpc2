@@ -1,11 +1,8 @@
 package com.joy.rpc.client.proxy;
 
 import com.alibaba.fastjson.JSON;
-import com.joy.rpc.client.RpcClient;
-import com.joy.rpc.client.domain.RpcClientHandler;
 import com.joy.rpc.client.service.UserService;
 import com.joy.rpc.common.domain.Request;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -1,6 +1,6 @@
 //package com.joy.rpc.client;
 //
-//import com.joy.rpc.client.domain.RpcClientHandler;
+//import com.joy.rpc.client.handler.RpcClientHandler;
 //import com.joy.rpc.client.service.UserService;
 //import com.joy.rpc.common.codec.RpcDecoder;
 //import com.joy.rpc.common.codec.RpcEncoder;
