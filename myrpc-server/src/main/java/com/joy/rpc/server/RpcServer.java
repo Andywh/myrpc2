@@ -5,6 +5,7 @@ import com.joy.rpc.common.codec.RpcEncoder;
 import com.joy.rpc.common.domain.Request;
 import com.joy.rpc.common.domain.Response;
 import com.joy.rpc.common.domain.User;
+import com.joy.rpc.server.registry.impl.ZooKeeperRegistryServiceImpl;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -20,6 +21,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 public class RpcServer {
 
     public static void main(String[] args) throws InterruptedException {
+
+        ZooKeeperRegistryServiceImpl zk = new ZooKeeperRegistryServiceImpl("127.0.0.1:2181");
+        zk.register("getUser", "127.0.0.1:8764");
+        zk.register("getUser2", "127.0.0.1:8765");
+        zk.register("getUser3", "127.0.0.1:8766");
+
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {

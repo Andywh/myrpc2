@@ -18,6 +18,8 @@
 
     <properties>
         <version.protostuff>1.0.9</version.protostuff>
+        <version.zookeeper>3.4.6</version.zookeeper>
+        <version.zkclient>0.4</version.zkclient>
     </properties>
 
     <dependencyManagement>
@@ -75,6 +77,18 @@
                 <groupId>com.dyuproject.protostuff</groupId>
                 <artifactId>protostuff-runtime</artifactId>
                 <version>${version.protostuff}</version>
+            </dependency>
+            <!-- ZooKeeper -->
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${version.zookeeper}</version>
+            </dependency>
+            <!-- ZkClient -->
+            <dependency>
+                <groupId>com.101tec</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>${version.zkclient}</version>
             </dependency>
 
         </dependencies>
