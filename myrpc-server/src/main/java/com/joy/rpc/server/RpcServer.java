@@ -1,54 +1,50 @@
 package com.joy.rpc.server;
 
-import com.joy.rpc.common.codec.RpcDecoder;
-import com.joy.rpc.common.codec.RpcEncoder;
-import com.joy.rpc.common.domain.Request;
-import com.joy.rpc.common.domain.Response;
-import com.joy.rpc.server.handler.RpcServerHandler;
-import com.joy.rpc.server.registry.impl.ZooKeeperRegistryServiceImpl;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import com.joy.rpc.common.annotation.RpcService;
+import com.joy.rpc.server.core.NettyServer;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ai Lun on 2020-08-23.
  */
-public class RpcServer {
 
-    public static void main(String[] args) throws InterruptedException {
+public class RpcServer extends NettyServer implements ApplicationContextAware, InitializingBean, DisposableBean {
 
-        ZooKeeperRegistryServiceImpl zk = new ZooKeeperRegistryServiceImpl("127.0.0.1:2181");
-        zk.register("getUser", "127.0.0.1:8764");
-        zk.register("getUser2", "127.0.0.1:8765");
-        zk.register("getUser3", "127.0.0.1:8766");
+    private Map<String, Object> serviceMap = new HashMap<>();
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup);
-            bootstrap.channel(NioServerSocketChannel.class);
-            bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                protected void initChannel(SocketChannel channel) throws Exception {
-                    ChannelPipeline pipeline = channel.pipeline();
-                    pipeline.addLast(new RpcEncoder(Response.class)); // 编码 RPC 请求
-                    pipeline.addLast(new RpcDecoder(Request.class)); // 解码 RPC 响应
-                    pipeline.addLast(new RpcServerHandler());
-                }
-            });
+    public RpcServer(String serverAddress, String registryAddress) {
+        super(serverAddress, registryAddress);
+    }
 
-            ChannelFuture future = bootstrap.bind("127.0.0.1", 8894).sync();
-            // 关闭 RPC 服务器
-            future.channel().closeFuture().sync();
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
+    @Override
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+        Map<String, Object> serviceBeanMap = ctx.getBeansWithAnnotation(RpcService.class);
+        if (MapUtils.isNotEmpty(serviceBeanMap)) {
+            for (Object serviceBean : serviceBeanMap.values()) {
+                RpcService rpcService = serviceBean.getClass().getAnnotation(RpcService.class);
+                String interfaceName = rpcService.value().getName();
+                String version = rpcService.version();
+                // todo 注册 注册这一步是放外层，还是放里面呢？
+            }
         }
     }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
+
+    @Override
+    public void destroy() throws Exception {
+
+    }
+
 }
