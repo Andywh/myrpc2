@@ -12,4 +12,10 @@ public interface RegistryService {
      * @param serviceAddress 服务地址
      */
     void register(String serviceName, String serviceAddress);
+
+    /**
+     * 取消注册
+     *
+     */
+    void unregister();
 }

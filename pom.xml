@@ -98,7 +98,12 @@
                 <artifactId>zkclient</artifactId>
                 <version>${version.zkclient}</version>
             </dependency>
-
+            <!-- SLF4J -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.7.7</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

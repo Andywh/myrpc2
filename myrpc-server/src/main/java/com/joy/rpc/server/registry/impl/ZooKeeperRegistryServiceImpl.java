@@ -9,6 +9,10 @@ import org.I0Itec.zkclient.ZkClient;
  */
 public class ZooKeeperRegistryServiceImpl implements RegistryService {
 
+    // 注册格式:
+    // /registry/serviceName -> 127.0.0.1:8876
+    //
+
     private final ZkClient zkClient;
 
     public ZooKeeperRegistryServiceImpl(String zkAddress) {
@@ -30,6 +34,11 @@ public class ZooKeeperRegistryServiceImpl implements RegistryService {
         }
         String addressPath = servicePath + "/address-";
         String addressNode = zkClient.createEphemeralSequential(addressPath, serviceAddress);
+    }
+
+    @Override
+    public void unregister() {
+
     }
 
     public static void main(String[] args) {
