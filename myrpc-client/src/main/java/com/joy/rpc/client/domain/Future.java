@@ -3,7 +3,6 @@ package com.joy.rpc.client.domain;
 import com.joy.rpc.client.RpcClient;
 import com.joy.rpc.common.domain.Request;
 import com.joy.rpc.common.domain.Response;
-import com.joy.rpc.common.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,10 +83,6 @@ public class Future implements java.util.concurrent.Future<Object> {
         RpcClient.submit(new Runnable() {
             @Override
             public void run() {
-                //System.out.println("run");
-                //
-                //callback.success("123");
-
                 if (!res.isError()) {
                     callback.success(res.getResult());
                 } else {

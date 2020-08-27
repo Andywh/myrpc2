@@ -20,10 +20,16 @@
         <version.protostuff>1.0.9</version.protostuff>
         <version.zookeeper>3.4.6</version.zookeeper>
         <version.zkclient>0.4</version.zkclient>
+        <version.spring>4.1.5.RELEASE</version.spring>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+            </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
