@@ -23,4 +23,5 @@ public class RpcServerInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast(new RpcDecoder(Request.class)); // 解码 RPC 响应
         pipeline.addLast(new RpcServerHandler());
     }
+
 }

@@ -14,7 +14,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.spi.ServiceRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -63,6 +62,7 @@ public class NettyServer implements Server {
                     String host = array[0];
                     int port = Integer.parseInt(array[1]);
                     ChannelFuture future = bootstrap.bind(host, port).sync();
+
                     if (registryService != null) {
                         registryService.register(serverAddress, serviceMap);
                     }

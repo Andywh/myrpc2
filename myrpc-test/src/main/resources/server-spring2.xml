@@ -17,7 +17,7 @@
 <!--    </bean>-->
 
     <bean id="rpcServer" class="com.joy.rpc.server.RpcServer">
-        <constructor-arg name="serverAddress" value="${server.address}"/>
+        <constructor-arg name="serverAddress" value="${server.address2}"/>
         <constructor-arg name="registryAddress" value="${registry.address}"/>
     </bean>
 
