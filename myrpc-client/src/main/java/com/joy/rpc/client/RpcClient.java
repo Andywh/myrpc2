@@ -1,16 +1,19 @@
 package com.joy.rpc.client;
 
-import com.joy.rpc.client.connect.ChannelManager;
 import com.joy.rpc.client.connect.ConnectionManager;
 import com.joy.rpc.client.discovery.DiscoveryService;
 import com.joy.rpc.client.discovery.impl.ZooKeeperDiscoveryServiceImpl;
 import com.joy.rpc.client.domain.Future;
 import com.joy.rpc.client.domain.context.FutureManager;
+import com.joy.rpc.client.loadbalance.RpcLoadBalance;
+import com.joy.rpc.client.loadbalance.impl.RpcLoadBalanceRandom;
 import com.joy.rpc.client.proxy.RpcProxy;
+import com.joy.rpc.client.proxy.RpcService;
 import com.joy.rpc.common.domain.Request;
 import io.netty.channel.*;
 
-import java.util.concurrent.ExecutionException;
+import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 public class RpcClient {
 
     private DiscoveryService discoveryService;
+
+    private RpcLoadBalance rpcLoadBalance = new RpcLoadBalanceRandom();
 
     public RpcClient(String registryAddress) {
         this.discoveryService = new ZooKeeperDiscoveryServiceImpl(registryAddress);
@@ -33,22 +38,18 @@ public class RpcClient {
         threadPoolExecutor.submit(task);
     }
 
-    //public static <T> T createService(Class<T> interfaceClass) {
-    //    return RpcProxy.create(interfaceClass);
-    //}
-
-    public Future send(Request request) {
-        Future future = new Future(request);
-        FutureManager.putFuture(request.getRequestId(), future);
-        Channel channel = ChannelManager.getChannel("getUser");
-        System.out.println("choose channel: " + channel.remoteAddress().toString());
-        try {
-            channel.writeAndFlush(request).sync();
-        } catch (Exception e) {
-            System.out.println("send error");
-        }
-        return future;
+    public static <T> T createService(Class<T> interfaceClass) {
+        return RpcProxy.create(interfaceClass);
     }
+
+    public static <T> T createService(Class<T> interfaceClass, String version) {
+        return RpcProxy.create(interfaceClass, version);
+    }
+
+    public static <T> RpcService createAsyncService(Class<T> interfaceClass, String version) {
+        return new RpcProxy<T>(interfaceClass, version);
+    }
+
 
 
 }

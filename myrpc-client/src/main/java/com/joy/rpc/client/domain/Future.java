@@ -47,7 +47,7 @@ public class Future implements java.util.concurrent.Future<Object> {
     public Object get() throws InterruptedException, ExecutionException {
         sync.acquire(1);
         if (this.response != null) {
-            return this.response;
+            return this.response.getResult();
         } else {
             return null;
         }

@@ -25,4 +25,6 @@ public class Request implements Serializable {
 
     private Object[] parameters;
 
+    private String version;
+
 }

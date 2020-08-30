@@ -1,19 +1,16 @@
 package com.joy.rpc.client.handler;
 
-import com.joy.rpc.client.connect.ChannelManager;
+import com.joy.rpc.client.connect.ConnectionManager;
+import com.joy.rpc.client.discovery.impl.ZooKeeperDiscoveryServiceImpl;
 import com.joy.rpc.client.domain.Future;
 import com.joy.rpc.client.domain.context.FutureManager;
-import com.joy.rpc.common.codec.RpcDecoder;
-import com.joy.rpc.common.codec.RpcEncoder;
+import com.joy.rpc.client.loadbalance.impl.RpcLoadBalanceRandom;
 import com.joy.rpc.common.domain.Request;
 import com.joy.rpc.common.domain.Response;
-import io.netty.bootstrap.Bootstrap;
+import com.joy.rpc.common.util.ServiceUtil;
 import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
-import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * Created by Ai Lun on 2020-08-22.
@@ -32,7 +29,7 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<Response> {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws InterruptedException {
         System.out.println("channelActive " + ctx.channel().remoteAddress().toString());
-        ChannelManager.putChannel("getUserName", ctx.channel());
+        //ChannelManager.putChannel("getUserName", ctx.channel());
     }
 
     @Override
@@ -48,5 +45,20 @@ public class RpcClientHandler extends SimpleChannelInboundHandler<Response> {
         future.done(response);
     }
 
+    public static Future send(Request request) {
+        Future future = new Future(request);
+        FutureManager.putFuture(request.getRequestId(), future);
+        String serviceKey = ServiceUtil.buildServiceKey(request.getClazzName(), request.getVersion());
+        List<String> addresses = ZooKeeperDiscoveryServiceImpl.serviceMap.get(serviceKey);
+        String address = RpcLoadBalanceRandom.route(addresses);
+        Channel channel = ConnectionManager.getChannel(address);
+        System.out.println("choose channel: " + channel.remoteAddress().toString());
+        try {
+            channel.writeAndFlush(request).sync();
+        } catch (Exception e) {
+            System.out.println("send error");
+        }
+        return future;
+    }
 
 }

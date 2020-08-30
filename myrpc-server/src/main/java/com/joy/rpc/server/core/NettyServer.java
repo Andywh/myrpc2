@@ -28,7 +28,7 @@ public class NettyServer implements Server {
     private Thread thread;
     private String serverAddress;
     private RegistryService registryService;
-    private Map<String, Object> serviceMap = new HashMap<>();
+    public static Map<String, Object> serviceMap = new HashMap<>();
 
     public NettyServer(String serverAddress, String registryAddress) {
         this.serverAddress = serverAddress;
