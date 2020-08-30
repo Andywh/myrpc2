@@ -1,8 +1,0 @@
-2020-08-30 15:06:09 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:06:21 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:07:13 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:09:01 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:10:32 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:10:45 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:10:52 ERROR ZooKeeperDiscoveryServiceImpl:57 - Wathch node exception: null
-2020-08-30 15:14:13 ERROR ZooKeeperDiscoveryServiceImpl:58 - Wathch node exception: Path must start with / character
