@@ -2,6 +2,8 @@ package com.joy.rpc.client;
 
 import com.joy.rpc.client.connect.ChannelManager;
 import com.joy.rpc.client.connect.ConnectionManager;
+import com.joy.rpc.client.discovery.DiscoveryService;
+import com.joy.rpc.client.discovery.impl.ZooKeeperDiscoveryServiceImpl;
 import com.joy.rpc.client.domain.Future;
 import com.joy.rpc.client.domain.context.FutureManager;
 import com.joy.rpc.client.proxy.RpcProxy;
@@ -17,6 +19,12 @@ import java.util.concurrent.TimeUnit;
  * Created by Ai Lun on 2020-08-22.
  */
 public class RpcClient {
+
+    private DiscoveryService discoveryService;
+
+    public RpcClient(String registryAddress) {
+        this.discoveryService = new ZooKeeperDiscoveryServiceImpl(registryAddress);
+    }
 
     private static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(16, 16,
             600L, TimeUnit.SECONDS, new LinkedBlockingDeque<>(1000));
@@ -42,26 +50,5 @@ public class RpcClient {
         return future;
     }
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-
-        ConnectionManager connectionManager = new ConnectionManager();
-        connectionManager.connectServer("127.0.0.1", 8894, "getUser");
-        connectionManager.connectServer("127.0.0.1", 8895, "getPoint");
-
-        RpcClient client = new RpcClient();
-
-        Request request = new Request();
-        request.setRequestId("2874362");
-        request.setClazzName("com.joy.rpc.UserServiceImpl");
-        request.setMethodName("query()");
-
-        Thread.sleep(3000);
-
-        Future future = client.send(request);
-
-        System.out.println("continue...");
-        System.out.println("异步结果: " + future.get());
-        System.out.println("end...");
-    }
 
 }
