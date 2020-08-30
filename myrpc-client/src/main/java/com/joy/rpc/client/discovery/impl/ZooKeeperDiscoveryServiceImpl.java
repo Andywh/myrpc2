@@ -54,7 +54,6 @@ public class ZooKeeperDiscoveryServiceImpl implements DiscoveryService {
             logger.info("error " + e.toString());
         }
 
-
     }
 
     public static void main(String[] args) {
