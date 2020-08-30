@@ -40,7 +40,5 @@ public class RpcAsyncTest {
         System.out.println("continue...");
 
         System.out.println("result: " + future.get());
-
-
     }
 }
